@@ -1,0 +1,4 @@
+todo_api/env/
+todo_api/src/logs
+*pyc
+*sqlite3*
