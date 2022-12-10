@@ -36,9 +36,6 @@ async def create_token(form_data: OAuth2PasswordRequestForm = Depends()):
     return {'token': token, 'token_type': 'bars'}
 
 
-@router.get('/', response_model=List[UserPydantic])
+@router.get('/info', response_model=UserPydantic)
 async def get_users(user: User = Depends(get_user)):
-    print(type(user))
-    users = await UserPydantic.from_queryset(User.all())
-    logger.debug(users)
-    return users
+    return await UserPydantic.from_tortoise_orm(user)

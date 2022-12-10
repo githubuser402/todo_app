@@ -6,7 +6,7 @@ from utils.logger import logger
 from models import User
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/token", scheme_name="JWT")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token", scheme_name="JWT")
 
 
 async def get_user(token: str = Depends(oauth2_scheme)):

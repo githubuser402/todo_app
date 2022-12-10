@@ -22,12 +22,12 @@ async def root():
 
 app.include_router(
     user.router,
-    prefix='/users',
+    prefix='/user',
     dependencies=[]
 )
 
 app.include_router(
     todo.router,
-    prefix='/todo',
+    prefix='/tasks',
     dependencies=[]
 )

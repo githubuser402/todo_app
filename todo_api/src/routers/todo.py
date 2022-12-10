@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
+from tortoise.contrib.fastapi import HTTPNotFoundError
 from models import Task, TaskPydantic, TaskInPydantic, User, UserInPydantic, UserPydantic
 from dependencies import get_user
 from utils.logger import logger
@@ -52,18 +53,19 @@ async def change_task_done_status(user: User = Depends(get_user), task_id: int =
     return await TaskPydantic.from_tortoise_orm(task)
 
 
-@router.patch('/{task_id}', response_model=TaskPydantic)
-async def patch_task(task_id:int, task_data: TaskInPydantic, user: User = Depends(get_user)):
-    try:
-        task = await Task.filter(user=user).filter(id=task_id).first()
-    except:
+@router.put('/{task_id}', response_model=TaskPydantic)
+async def update_task(task_id:int, task_data: TaskInPydantic, user: User = Depends(get_user)):
+
+    task = await Task.filter(user=user).get_or_none(id=task_id)
+    print(f'\n\n\n\n\n\n{task} \n\n\n\n\n\n')
+    if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Object not found"
         )
-        
-    pass
     
+    # await task.update(**task_data.dict(exclude_unset=True, exclude={'done'}))
+    return await TaskPydantic.from_tortoise_orm(task)
 
 
 @router.delete('/{task_id}', response_model=TaskPydantic)
@@ -78,8 +80,6 @@ async def delete_task(task_id: int, user: User = Depends(get_user)):
         )
 
     task_json = await TaskPydantic.from_tortoise_orm(task) 
-
-    print(task_json, "\n\n\n\n\n\n\n")
     await task.delete()
     
     return task_json
