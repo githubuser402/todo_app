@@ -1,23 +1,26 @@
 import logging 
 from pathlib import Path
+import os
 
 def get_logger() -> logging.RootLogger:
-    """instance of logger module, will be used for logging operations"""
-    
-    # logger config
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
+    log_file_name = os.path.join(
+        __name__, os.pardir, "logs/", "development.log")
 
-    # log format
-    lg_format = "%(levelname)s|%(filename)s:%(lineno)d|%(asctime)s|%(message)s"
-    log_format = logging.Formatter(lg_format)
+    logger = logging.getLogger()
 
-    # file handler
-    file_handler = logging.FileHandler(Path(__name__).parent / "logs/debug.log")
-    file_handler.setFormatter(log_format)
+    log_formatter = logging.Formatter( "[%(levelname)-5.5s]  [%(filename)s]  %(message)s")
 
-    logger.handlers.clear()
+    file_handler = logging.FileHandler(log_file_name)
+    file_handler.setFormatter(log_formatter)
+
     logger.addHandler(file_handler)
+
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(log_formatter)
+
+    logger.addHandler(console_handler)
+
+    logger.setLevel(logging.DEBUG)
     return logger
 
 logger = get_logger()

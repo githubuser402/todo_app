@@ -1,27 +1,33 @@
 from fastapi import FastAPI, Depends
 from tortoise.contrib.fastapi import register_tortoise
-from routers import user
+from routers import user, todo
 from dependencies import get_user
-import config.database
+import config
 
 
 app = FastAPI()
 
 register_tortoise(
     app,
-    db_url=config.database.DATABASE_URL,
-    modules={"models": ["models"]},
+    config=config.TORTOISE_ORM,
     generate_schemas=True,
     add_exception_handlers=True,
 )
 
+
 @app.get('/')
 async def root():
-    return {"a": [1,2,3]}
+    return {"a": [1, 2, 3]}
 
 
 app.include_router(
     user.router,
-    prefix="/users",
+    prefix='/users',
+    dependencies=[]
+)
+
+app.include_router(
+    todo.router,
+    prefix='/todo',
     dependencies=[]
 )

@@ -23,5 +23,26 @@ class User(Model):
     class PydanticMeta:
         pass
 
+
 UserPydantic = pydantic_model_creator(User, name="User")
 UserInPydantic = pydantic_model_creator(User, name="UserIn", exclude_readonly=True)
+
+
+class Task(Model):
+    id = fields.IntField(pk=True)
+    title = fields.CharField(max_length=150)
+    description = fields.TextField(null=True)
+    created = fields.DatetimeField(auto_now=True)
+    do_till = fields.DatetimeField(null=True)
+    user = fields.ForeignKeyField('models.User', related_name='tasks')
+    done = fields.BooleanField(default=False)
+
+    def __repr__(self) -> str:
+        return f'<{self.id} {self.title[:20]}>'
+
+    class PydanticMeta:
+        pass
+    
+
+TaskPydantic = pydantic_model_creator(Task, name="Task")
+TaskInPydantic = pydantic_model_creator(Task, name="TaskIn", exclude_readonly=True)

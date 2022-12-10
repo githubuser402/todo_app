@@ -1,5 +1,5 @@
 from typing import Union, Any
-import config.token
+import config
 from jose import jwt, JWTError
 import datetime as dt
 
@@ -8,15 +8,15 @@ class Token:
     def encode(cls, user_id: int) -> str:
         token_data = {
             "id": user_id,
-            "exp": dt.datetime.utcnow() + config.token.ACCESS_TOKEN_EXPIRE_TIME
+            "exp": dt.datetime.utcnow() + config.ACCESS_TOKEN_EXPIRE_TIME
         }
 
-        return jwt.encode(token_data, config.token.JWT_SECRET_KEY, config.token.ALGORITHM)
+        return jwt.encode(token_data, config.JWT_SECRET_KEY, config.ALGORITHM)
 
     @classmethod
     def decode(cls, token: str) -> dict:
         try:
-            return jwt.decode(token, config.token.JWT_SECRET_KEY, algorithms=[config.token.ALGORITHM,])
+            return jwt.decode(token, config.JWT_SECRET_KEY, algorithms=[config.ALGORITHM,])
         except JWTError as ex:
             print(ex)
             raise ex
