@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
 from routers import user, todo
 from dependencies import get_user
@@ -14,10 +15,17 @@ register_tortoise(
     add_exception_handlers=True,
 )
 
+origins = [
+    '*',
+]
 
-@app.get('/')
-async def root():
-    return {"a": [1, 2, 3]}
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],    
+)
 
 
 app.include_router(

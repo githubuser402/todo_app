@@ -8,14 +8,14 @@ class User(Model):
     id = fields.IntField(pk=True)
     username = fields.CharField(max_length=100, unique=True, null=False)
     password = fields.CharField(max_length=100, null=False)
+    email = fields.CharField(max_length=100, null=True)
     
     @staticmethod
     def generate_hash(password: str) -> bool:
         return sha256.hash(password)
     
-    @staticmethod
-    def verify_hash(hash: str, password: str) -> bool:
-        return sha256.verify(password, hash)
+    def verify_hash(self, password: str) -> bool:
+        return sha256.verify(password, self.password)
 
     def __repr__(self) -> str:
         return f"<{self.id} {self.nickname}>" 
@@ -39,10 +39,11 @@ class Task(Model):
 
     def __repr__(self) -> str:
         return f'<{self.id} {self.title[:20]}>'
-
+    class Meta: 
+        ordering = ['-created']
     class PydanticMeta:
-        pass
+        pass        
     
 
 TaskPydantic = pydantic_model_creator(Task, name="Task")
-TaskInPydantic = pydantic_model_creator(Task, name="TaskIn", exclude_readonly=True)
+TaskInPydantic = pydantic_model_creator(Task, name="TaskIn", exclude_readonly=True, exclude=('done'))
